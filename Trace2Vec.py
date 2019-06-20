@@ -68,9 +68,9 @@ def cluster(folderName, vectorsize, clusterType):
 
 
 
-def get_titles_by_cluster(id):
-    list = []
-    for x in range(0, len(assigned_clusters)):
-        if (assigned_clusters[x] == id):
-            list.append(used_lines[x])
-    return list
+# def get_titles_by_cluster(id):
+#     list = []
+#     for x in range(0, len(assigned_clusters)):
+#         if (assigned_clusters[x] == id):
+#             list.append(used_lines[x])
+#     return list
