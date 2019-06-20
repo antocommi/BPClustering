@@ -1,3 +1,14 @@
-output/*
-output/BPIC15GroundTruthT2VVS16.word2vec
-output/BPIC15GroundTruthT2VVS16.model
+*.pyc
+.DS_Store
+target
+bin
+build
+.gradle
+*.iml
+*.ipr
+*.iws
+*.log
+.classpath
+.project
+.settings
+.idea
