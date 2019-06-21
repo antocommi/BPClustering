@@ -1,0 +1,18 @@
+Precision
+    - https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html
+
+Recall
+    - https://scikit-learn.org/stable/modules/generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score
+
+Normalized Mutual Information 
+    - https://course.ccs.neu.edu/cs6140sp15/7_locality_cluster/Assignment-6/NMI.pdf
+    - https://scikit-learn.org/stable/modules/generated/sklearn.metrics.normalized_mutual_info_score.html
+
+RI  
+    - https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html
+    (Sotto versione adjusted)
+    - https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_rand_score.html
+
+F1-Score
+    - https://en.wikipedia.org/wiki/F1_score
+    - https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
