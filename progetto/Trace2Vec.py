@@ -5,6 +5,8 @@ import sklearn
 from sklearn.mixture.gaussian_mixture import GaussianMixture
 from nltk.cluster.kmeans import KMeansClusterer
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import hierarchical
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
 def learn(folderName,vectorsize):
@@ -57,10 +59,19 @@ def cluster(folderName, vectorsize, clusterType):
 
     elif(clusterType=="SVC"):
         classifier=SVC(kernel='rbf', gamma='auto', random_state=0)
-        text_file = open("input/"+folderName+".real", "r")
-        y=[]
-        for line in text_file.readlines():
-            y.append(int(line.split(", ")[1]))
+        y=getY(folderName)
+        classifier.fit(vectors, y)
+        assigned_clusters=classifier.predict(vectors)
+
+    elif(clusterType=="T2VH"):
+        ret=hierarchical.ward_tree(vectors, n_clusters=NUM_CLUSTERS)
+        children=ret[0]
+        n_leaves=ret[2]
+        assigned_clusters=hierarchical._hc_cut(NUM_CLUSTERS, children, n_leaves)
+
+    elif(clusterType=="RandomForest"):
+        classifier=RandomForestClassifier()
+        y=getY(folderName)
         classifier.fit(vectors, y)
         assigned_clusters=classifier.predict(vectors)
 
@@ -80,3 +91,10 @@ def cluster(folderName, vectorsize, clusterType):
 
     resultFile.close()
     print("done with " , clusterType , " on event log ", folderName)
+
+def getY(folderName):
+    text_file = open("input/"+folderName+".real", "r")
+    y=[]
+    for line in text_file.readlines():
+        y.append(int(line.split(", ")[1]))
+    return y
