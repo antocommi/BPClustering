@@ -68,9 +68,9 @@ def read_graph():
 	Reads the input network in networkx.
 	'''
 	if args.weighted:
-		G = nx.read_edgelist(args.input, nodetype=int, data=(('weight',float),), create_using=nx.DiGraph())
+		G = nx.read_edgelist(args.input, nodetype=str, data=(('weight',float),), create_using=nx.DiGraph())
 	else:
-		G = nx.read_edgelist(args.input, nodetype=int, create_using=nx.DiGraph())
+		G = nx.read_edgelist(args.input, nodetype=str, create_using=nx.DiGraph())
 		for edge in G.edges():
 			G[edge[0]][edge[1]]['weight'] = 1
 
@@ -94,10 +94,15 @@ def main(args):
 	Pipeline for representational learning for all nodes in a graph.
 	'''
 	nx_G = read_graph()
+	print("1")
 	G = node2vec.Graph(nx_G, args.directed, args.p, args.q)
+	print("2")
 	G.preprocess_transition_probs()
+	print("3")
 	walks = G.simulate_walks(args.num_walks, args.walk_length)
+	print("4")
 	learn_embeddings(walks)
+	print("5")
 
 if __name__ == "__main__":
 	args = parse_args()

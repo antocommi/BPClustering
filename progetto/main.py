@@ -13,9 +13,8 @@ def main():
 
     # for alg in clustering:
     #     Trace2Vec.cluster(logName, vectorsize, alg)
-    Trace2Vec.cluster(logName, vectorsize, "LogisticRegression")
 
-    scores=get_scores()
+    scores=get_scores("Trace2Vec")
     print_scores(scores)
 
 def compute_scores(y_true, y_pred):
@@ -35,9 +34,9 @@ def getDict(file):
         vec[read[0].strip()]=int(read[1])
     return vec
 
-def get_scores():
+def get_scores(embedding):
     yD=getDict("input/"+logName+".real")
-    table=[[""]+measure]
+    table=[[embedding]+measure]
 
     for alg in clustering:
         y_predD=getDict("output/"+logName+"T2VVS16"+alg+".csv")
@@ -51,6 +50,7 @@ def get_scores():
         for meas in measure:
             line.append(score[meas])
         table.append(line)
+    print(table)
     return table
 
 def print_scores(scores):

@@ -252,4 +252,4 @@ def buildGraph(filename):
     graph.close()
         
 
-buildGraph('RepLearnForBP-3/input/BPIC15GroundTruth.xes')
+buildGraph('progetto/input/BPIC15GroundTruth.xes')
