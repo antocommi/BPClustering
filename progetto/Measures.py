@@ -3,9 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotly 
 import pandas as pd
-import plotly.plotly as py
-import plotly.graph_objs as go
-plotly.tools.set_credentials_file(username='antocommi', api_key='OJFox7Db8QuiDHu5WhsZ')
 
 class ClusteringMeasures:
     
@@ -15,7 +12,7 @@ class ClusteringMeasures:
     # Questo metodo calcola i vari score di una tecnica di clustering
     # y_true : cluster reale 
     # y_pred : cluster calcolato
-    # name_cluster_type : nome identificativo della tecnica di clusterizzazione(Es: KMeans, ecc...)  
+    # name_cluster_type : nome identificativo della tecnica di clusterizzazione (Es: KMeans, ecc...)  
     def compute_scores(self, y_true, y_pred, name_cluster_type):
         scores = {}
         # MISURE DA CONTROLLARE 
@@ -28,13 +25,10 @@ class ClusteringMeasures:
         return scores
     
     def plot_all(self):
-        # print("0")
-        # # plt.figure()
-        # print("1")
+        print("plot non implementato")
+        # plt.figure()
         # df2 = pd.DataFrame(np.random.rand(1, 4), columns=['a', 'b', 'c', 'd'])
-        # print("3")
         # df2.plot.bar()
-        # print("4")
         # plt.axhline(0, color='k')
 
 
