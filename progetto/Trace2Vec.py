@@ -8,6 +8,7 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import hierarchical
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 def learn(folderName,vectorsize):
     documents = loadXES.get_doc_XES_tagged(folderName+'.xes')
@@ -71,6 +72,18 @@ def cluster(folderName, vectorsize, clusterType):
 
     elif(clusterType=="RandomForest"):
         classifier=RandomForestClassifier()
+        y=getY(folderName)
+        classifier.fit(vectors, y)
+        assigned_clusters=classifier.predict(vectors)
+
+    elif(clusterType=="DecisionTree"):
+        classifier=DecisionTreeClassifier()
+        y=getY(folderName)
+        classifier.fit(vectors, y)
+        assigned_clusters=classifier.predict(vectors)
+
+    elif(clusterType=="LogisticRegression"):
+        classifier=sklearn.linear_model.LogisticRegression()
         y=getY(folderName)
         classifier.fit(vectors, y)
         assigned_clusters=classifier.predict(vectors)

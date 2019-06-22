@@ -1,6 +1,6 @@
 fileName="BPIC15GroundTruth"
 #per testare altri algoritmi basta aggiungerne il nome al vettore out sottostante
-out=["KMeans", "GMM", "SVC", "T2VH", "RandomForest"]
+out=["KMeans", "GMM", "SVC", "T2VH", "RandomForest", "DecisionTree"]
 
 real=[[], []]
 text_file = open("input/"+fileName+".real", "r")

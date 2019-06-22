@@ -101,4 +101,5 @@ def main(args):
 
 if __name__ == "__main__":
 	args = parse_args()
+	args.input="graph_BPI_2015.txt"
 	main(args)
