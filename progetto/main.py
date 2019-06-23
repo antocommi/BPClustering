@@ -50,7 +50,6 @@ def get_scores(embedding):
         for meas in measure:
             line.append(score[meas])
         table.append(line)
-    print(table)
     return table
 
 def print_scores(scores):
