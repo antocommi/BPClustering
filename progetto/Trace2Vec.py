@@ -1,14 +1,5 @@
 import gensim
 import loadXES
-import nltk
-import sklearn
-from sklearn.mixture.gaussian_mixture import GaussianMixture
-from nltk.cluster.kmeans import KMeansClusterer
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import hierarchical
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
 
 def learn(folderName,vectorsize):
     documents = loadXES.get_doc_XES_tagged(folderName+'.xes')
@@ -31,67 +22,20 @@ def learn(folderName,vectorsize):
     model.save('output/'+folderName+'T2VVS'+str(vectorsize) +'.model')
     model.save_word2vec_format('output/'+folderName+ 'T2VVS'+str(vectorsize) + '.word2vec')
 
-
-def cluster(folderName, vectorsize, clusterType):
+def startCluster(folderName, vectorsize):
     corpus = loadXES.get_doc_XES_tagged(folderName+'.xes')
     print ('Data Loading finished, ', str(len(corpus)), ' traces found.')
-    print(corpus)
     model= gensim.models.Doc2Vec.load('output/'+folderName+'T2VVS'+str(vectorsize) +'.model')
 
     vectors = []
-    NUM_CLUSTERS= 5
     print("inferring vectors")
     for doc_id in range(len(corpus)):
         inferred_vector = model.infer_vector(corpus[doc_id].words)
         vectors.append(inferred_vector)
     print("done")
+    return vectors, corpus
 
-    if(clusterType=="KMeans"):
-        kclusterer = KMeansClusterer(NUM_CLUSTERS, distance=nltk.cluster.util.cosine_distance, repeats=25)
-        assigned_clusters = kclusterer.cluster(vectors, assign_clusters=True)
-
-    elif(clusterType=="HierWard"):
-        ward = AgglomerativeClustering(n_clusters=NUM_CLUSTERS, linkage='ward').fit(vectors)
-        assigned_clusters = ward.labels_
-        
-    elif(clusterType=="GMM"):
-        GMM=GaussianMixture(n_components=NUM_CLUSTERS)
-        assigned_clusters=GMM.fit_predict(vectors)
-
-    elif(clusterType=="SVC"):
-        classifier=SVC(kernel='rbf', gamma='auto', random_state=0)
-        y=getY(folderName)
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
-
-    elif(clusterType=="T2VH"):
-        ret=hierarchical.ward_tree(vectors, n_clusters=NUM_CLUSTERS)
-        children=ret[0]
-        n_leaves=ret[2]
-        assigned_clusters=hierarchical._hc_cut(NUM_CLUSTERS, children, n_leaves)
-
-    elif(clusterType=="RandomForest"):
-        classifier=RandomForestClassifier()
-        y=getY(folderName)
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
-
-    elif(clusterType=="DecisionTree"):
-        classifier=DecisionTreeClassifier()
-        y=getY(folderName)
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
-
-    elif(clusterType=="LogisticRegression"):
-        classifier=sklearn.linear_model.LogisticRegression()
-        y=getY(folderName)
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
-
-    else:
-        print(clusterType, " is not a predefined cluster type. Please use 'KMeans' or 'HierWard', or create a definition for ", clusterType)
-        return
-
+def endCluster(folderName, assigned_clusters, vectorsize, clusterType, corpus):
     trace_list = loadXES.get_trace_names(folderName+".xes")
     clusterResult= {}
     for doc_id in range(len(corpus)):
