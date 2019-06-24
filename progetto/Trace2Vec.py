@@ -35,7 +35,7 @@ def learn(folderName,vectorsize):
 def cluster(folderName, vectorsize, clusterType):
     corpus = loadXES.get_doc_XES_tagged(folderName+'.xes')
     print ('Data Loading finished, ', str(len(corpus)), ' traces found.')
-
+    print(corpus)
     model= gensim.models.Doc2Vec.load('output/'+folderName+'T2VVS'+str(vectorsize) +'.model')
 
     vectors = []
@@ -109,5 +109,5 @@ def getY(folderName):
     text_file = open("input/"+folderName+".real", "r")
     y=[]
     for line in text_file.readlines():
-        y.append(int(line.split(", ")[1]))
+        y.append(int(line.split(",")[1]))
     return y

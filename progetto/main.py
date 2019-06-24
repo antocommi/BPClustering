@@ -5,14 +5,14 @@ from texttable import Texttable
 
 clustering=["KMeans", "GMM", "SVC", "T2VH", "RandomForest", "DecisionTree", "LogisticRegression"]
 measure=["Precision", "Recall", "NMI", "F1", "RI"]
-logName='BPIC15GroundTruth'
+logName='BPIC15GroundTruth_ridotto'
 vectorsize=16
 
 def main():
-    # Trace2Vec.learn(logName,vectorsize)
+    Trace2Vec.learn(logName,vectorsize)
 
-    # for alg in clustering:
-    #     Trace2Vec.cluster(logName, vectorsize, alg)
+    for alg in clustering:
+        Trace2Vec.cluster(logName, vectorsize, alg)
 
     scores=get_scores("Trace2Vec")
     print_scores(scores)
