@@ -18,34 +18,43 @@ clustering=["KMeans", "GMM", "SVC", "T2VH", "RandomForest", "DecisionTree", "Log
 measure=["Precision", "Recall", "NMI", "F1", "RI"]
 logName='BPIC15GroundTruth_ridotto2'
 embed={"Trace2Vec": "T2V", "Node2Vec": "N2V"}
+clas={"Trace2Vec": Trace2Vec, "Node2Vec": Node2Vec}
 vectorsize=16
 NUM_CLUSTERS=5
 
 def main():
     scores=[]
 
-    #----------start Trace2Vec
-    #Trace2Vec.learn(logName,vectorsize)
-    y=Trace2Vec.getY(logName)
-    vectors, corpus=Trace2Vec.startCluster(logName, vectorsize)
-    for alg in clustering:
-        assigned_clusters=cluster(alg, vectors, y)
-        Trace2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
+    # #----------start Trace2Vec
+    # #Trace2Vec.learn(logName,vectorsize)
+    # y=Trace2Vec.getY(logName)
+    # vectors, corpus=Trace2Vec.startCluster(logName, vectorsize)
+    # for alg in clustering:
+    #     assigned_clusters=cluster(alg, vectors, y)
+    #     Trace2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
-    scores.append(get_scores("Trace2Vec"))
-    #----------end Trace2Vec
+    # scores.append(get_scores("Trace2Vec"))
+    # #----------end Trace2Vec
     
-    #----------start Node2Vec
-    #Node2Vec.learn(logName,vectorsize)
-    y=Node2Vec.getY(logName)
-    vectors, corpus=Node2Vec.startCluster(logName, vectorsize)
-    for alg in clustering:
-        assigned_clusters=cluster(alg, vectors, y)
-        Node2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
+    # #----------start Node2Vec
+    # #Node2Vec.learn(logName,vectorsize)
+    # y=Node2Vec.getY(logName)
+    # vectors, corpus=Node2Vec.startCluster(logName, vectorsize)
+    # for alg in clustering:
+    #     assigned_clusters=cluster(alg, vectors, y)
+    #     Node2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
-    scores.append(get_scores("Node2Vec"))
-    #----------end Node2Vec
+    # scores.append(get_scores("Node2Vec"))
+    # #----------end Node2Vec
 
+    for el in clas:
+        #clas[el].learn(logName,vectorsize)
+        y=clas[el].getY(logName)
+        vectors, corpus=clas[el].startCluster(logName, vectorsize)
+        for alg in clustering:
+            assigned_clusters=cluster(alg, vectors, y)
+            clas[el].endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
+        scores.append(get_scores(el))
 
     for score in scores:
         print_scores(score)
