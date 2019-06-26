@@ -1,6 +1,8 @@
 import Trace2Vec
 import Node2Vec
-import sklearn.metrics
+import node2vec
+import NGrams
+import prepareInput
 import texttable
 from texttable import Texttable
 import nltk
@@ -12,49 +14,61 @@ from sklearn.cluster import hierarchical
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
+import sklearn.metrics
 import warnings
 
-clustering=["KMeans", "GMM", "SVC", "T2VH", "RandomForest", "DecisionTree", "LogisticRegression"]
+clustering=["KMeans", "GMM", "SVM", "T2VH", "RandomForest", "DecisionTree", "LogisticRegression"]
 measure=["Precision", "Recall", "NMI", "F1", "RI"]
 logName='BPIC15GroundTruth_ridotto2'
-embed={"Trace2Vec": "T2V", "Node2Vec": "N2V"}
-clas={"Trace2Vec": Trace2Vec, "Node2Vec": Node2Vec}
+embed={"Trace2Vec": "T2V", "Node2Vec": "N2V", "NGrams": "NG"}
 vectorsize=16
 NUM_CLUSTERS=5
 
 def main():
+    prepareInput.createInput(logName)
+
     scores=[]
 
-    # #----------start Trace2Vec
-    # #Trace2Vec.learn(logName,vectorsize)
-    # y=Trace2Vec.getY(logName)
-    # vectors, corpus=Trace2Vec.startCluster(logName, vectorsize)
-    # for alg in clustering:
-    #     assigned_clusters=cluster(alg, vectors, y)
-    #     Trace2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
+    #----------start Trace2Vec
+    Trace2Vec.learn(logName,vectorsize)
+    y=Trace2Vec.getY(logName)
+    vectors, corpus=Trace2Vec.startCluster(logName, vectorsize)
+    for alg in clustering:
+        assigned_clusters=cluster(alg, vectors, y)
+        Trace2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
-    # scores.append(get_scores("Trace2Vec"))
-    # #----------end Trace2Vec
+    scores.append(get_scores("Trace2Vec"))
+    #----------end Trace2Vec
+
+    #----------start Node2Vec
+    args=Node2Vec.parse_args()
+    args.input="input/"+logName+".graph"
+    args.output="output/"+logName+"N2VVS"+str(vectorsize)+".node2vec"
+    nx_G = Node2Vec.read_graph(args)
+    G = node2vec.Graph(nx_G, True, args.p, args.q)
+    G.preprocess_transition_probs()
+    walks = G.simulate_walks(args.num_walks, args.walk_length)
+    Node2Vec.learn_embeddings(args, logName, vectorsize, walks)
+    Node2Vec.extract(logName, vectorsize)
     
-    # #----------start Node2Vec
-    # #Node2Vec.learn(logName,vectorsize)
-    # y=Node2Vec.getY(logName)
-    # vectors, corpus=Node2Vec.startCluster(logName, vectorsize)
-    # for alg in clustering:
-    #     assigned_clusters=cluster(alg, vectors, y)
-    #     Node2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
+    y=Node2Vec.getY(logName)
+    vectors, corpus=Node2Vec.startCluster(logName, vectorsize)
 
-    # scores.append(get_scores("Node2Vec"))
-    # #----------end Node2Vec
+    for alg in clustering:
+        assigned_clusters=cluster(alg, vectors, y)
+        Node2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
-    for el in clas:
-        #clas[el].learn(logName,vectorsize)
-        y=clas[el].getY(logName)
-        vectors, corpus=clas[el].startCluster(logName, vectorsize)
-        for alg in clustering:
-            assigned_clusters=cluster(alg, vectors, y)
-            clas[el].endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
-        scores.append(get_scores(el))
+    scores.append(get_scores("Node2Vec"))
+    #----------end Node2Vec
+
+    #----------start NGrams
+    vectors, y=NGrams.ngrams_BPI_2015(logName, vectorsize)
+    for alg in clustering:
+        assigned_clusters=cluster(alg, vectors, y)
+        NGrams.endCluster(logName, assigned_clusters, vectorsize, alg, [0]*len(vectors))
+
+    scores.append(get_scores("NGrams"))
+    #----------end NGrams
 
     for score in scores:
         print_scores(score)
@@ -85,9 +99,7 @@ def get_scores(embedding):
     table=[[embedding]+measure]
 
     for alg in clustering:
-        y_predD=getDict("output/"+logName+embed[embedding]+"VS16"+alg+".csv")
-        print("output/"+logName+embed[embedding]+"VS16"+alg+".csv")
-        #print(y_predD)
+        y_predD=getDict("output/"+logName+embed[embedding]+"VS"+str(vectorsize)+alg+".csv")
         y=[]
         y_pred=[]
         for trace in yD:
@@ -109,16 +121,12 @@ def cluster(clusterType, vectors, y):
     if(clusterType=="KMeans"):
         kclusterer = KMeansClusterer(NUM_CLUSTERS, distance=nltk.cluster.util.cosine_distance, repeats=25)
         assigned_clusters = kclusterer.cluster(vectors, assign_clusters=True)
-
-    elif(clusterType=="HierWard"):
-        ward = AgglomerativeClustering(n_clusters=NUM_CLUSTERS, linkage='ward').fit(vectors)
-        assigned_clusters = ward.labels_
         
     elif(clusterType=="GMM"):
         GMM=GaussianMixture(n_components=NUM_CLUSTERS)
         assigned_clusters=GMM.fit_predict(vectors)
 
-    elif(clusterType=="SVC"):
+    elif(clusterType=="SVM"):
         classifier=SVC(kernel='rbf', gamma='auto', random_state=0)
         classifier.fit(vectors, y)
         assigned_clusters=classifier.predict(vectors)
@@ -148,6 +156,13 @@ def cluster(clusterType, vectors, y):
         print(clusterType, " is not a predefined cluster type.")
         return
     return assigned_clusters
+
+# def getTrace(folderName):
+#     text_file = open("input/"+folderName+".graph.real", "r")
+#     y=[]
+#     for line in text_file.readlines():
+#         y.append(line.split(",")[0])
+#     return y
 
 warnings.filterwarnings("ignore")
 main()

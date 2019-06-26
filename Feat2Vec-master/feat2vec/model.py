@@ -68,12 +68,11 @@ class DeepFM():
         :param mask_zero: a toggle to mask ALL zero values for categoricals as zero vectors
         """
 
-
         if realval is None:
             self.realval = [False]*len(feature_dimensions) #default to all categoricals
         else:
             self.realval = realval
-        assert (type(self.realval)==list) and len(self.realval) == len(feature_dimensions),            "realval must either be a boolean list with length = #features, or None"
+        assert (type(self.realval)==list) and len(self.realval) == len(feature_dimensions), "realval must either be a boolean list with length = #features, or None"
 
 
 
@@ -94,16 +93,16 @@ class DeepFM():
         if deepin_feature == None:
             self.deepin_feature = [False]*len(feature_dimensions) #default to all categoricals
         else:
-            print len(deepin_feature),len(feature_dimensions)
+            print(len(deepin_feature),len(feature_dimensions))
             assert len(deepin_feature) == len(feature_dimensions), "must provide boolean list w/ length=#features"
             self.deepin_feature = deepin_feature
 
         #construct list of deep-in inputs
-        self.deepin_inputs = [deepin_inputs.pop(0) if self.deepin_feature[i] else None for i in xrange(len(feature_dimensions))]
+        self.deepin_inputs = [deepin_inputs.pop(0) if self.deepin_feature[i] else None for i in range(len(feature_dimensions))]
         assert(len(deepin_inputs) == 0), "provide deep input list of length = #deep features or # features"
 
         #construct list of extracted deep-in features
-        self.deepin_layers = [deepin_layers.pop(0) if self.deepin_feature[i] else None for i in xrange(len(feature_dimensions))  ]
+        self.deepin_layers = [deepin_layers.pop(0) if self.deepin_feature[i] else None for i in range(len(feature_dimensions))  ]
         assert (len(deepin_layers) == 0), "provide deep feature layer list of length = #deep features or # features"
 
     def check_build_params(self,l2_bias, l2_factors, l2_deep,bias_only,embeddings_only,deep_weight_groups,
@@ -159,7 +158,8 @@ class DeepFM():
             feature_index: the position of the feature in question in our list of features
         '''
         feature_dim = self.feature_dimensions[feature_index]
-        feature_cols = len(self.model_features[feature_index])
+        #feature_cols = len(self.model_features[feature_index])
+        feature_cols = self.model_features[feature_index]
         feature = Input(batch_shape=(None, feature_cols), name=self.feature_names[feature_index])
         if (self.embedding_dimensions > 0) and (not self.bias_only[feature_index]):
             ftemp = Embedding(input_dim=feature_dim,
@@ -320,10 +320,10 @@ class DeepFM():
                         factor_j = Add(name=name_j)(factors_j) # collapse them
 
                 if factor_i is None:
-                    print "Warning... {} does not have an embedding".format(feature_i)
+                    print("Warning... {} does not have an embedding".format(feature_i))
                     continue
                 if factor_j is None:
-                    print "Warning... {} does not have an embedding".format(feature_j)
+                    print("Warning... {} does not have an embedding".format(feature_j))
                     continue
 
                 dot_product = Dot(axes=-1, name="interaction_{}X{}".format(feature_i, name_j))
