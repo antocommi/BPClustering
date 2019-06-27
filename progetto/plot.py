@@ -16,12 +16,12 @@ def plot():
     classes = [0,1,2,3,4]
     
     
-    # PLOT TIPO 1 
+    ## PLOT TIPO 1 
     # plt.figure()
     # parallel_coordinates(data.head(n=plotted_trace), color_column, data.columns[3:6],color=colors)
     # plt.show()
 
-    # PLOT TIPO 2 
+    # # PLOT TIPO 2 
     # X = data[features[0:]]
     # X = X.transform(lambda x:x*20000)
     # y = data['cluster']
@@ -31,9 +31,8 @@ def plot():
     # visualizer.transform(X)   # Transform the data
     # visualizer.poof()         # Draw/show/poof the data
 
-    # PLOT TIPO 3
-    # df = pd.DataFrame(np.random.randn(1000, 4), columns = ['a', 'b', 'c', 'd'])
-    scatter_matrix(data, alpha = 0.2, figsize = (6, 6), diagonal = 'kde' )
-    plt.show()
+    # ## PLOT TIPO 3
+    # scatter_matrix(data, alpha = 0.2, figsize = (6, 6), diagonal = 'kde' )
+    # plt.show()
 
 plot()

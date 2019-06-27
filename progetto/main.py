@@ -16,6 +16,8 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 import sklearn.metrics
 import warnings
+from sklearn.model_selection import cross_val_predict
+from sklearn.model_selection import cross_validate
 
 clustering=["KMeans", "GMM", "SVM", "T2VH", "RandomForest", "DecisionTree", "LogisticRegression"]
 measure=["Precision", "Recall", "NMI", "F1", "RI"]
@@ -117,6 +119,9 @@ def print_scores(scores):
     t.add_rows(scores)
     print(t.draw())
 
+def cross_validation(classifier,vectors,y):
+    return cross_val_predict(classifier, vectors, y, cv=5)
+
 def cluster(clusterType, vectors, y):
     if(clusterType=="KMeans"):
         kclusterer = KMeansClusterer(NUM_CLUSTERS, distance=nltk.cluster.util.cosine_distance, repeats=25)
@@ -128,8 +133,10 @@ def cluster(clusterType, vectors, y):
 
     elif(clusterType=="SVM"):
         classifier=SVC(kernel='rbf', gamma='auto', random_state=0)
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
+        #cross-validation
+        assigned_clusters = cross_validation(classifier,vectors, y)
+        # classifier.fit(vectors, y)
+        # assigned_clusters=classifier.predict(vectors)
 
     elif(clusterType=="T2VH"):
         ret=hierarchical.ward_tree(vectors, n_clusters=NUM_CLUSTERS)
@@ -139,18 +146,24 @@ def cluster(clusterType, vectors, y):
 
     elif(clusterType=="RandomForest"):
         classifier=RandomForestClassifier()
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
+        #cross-validation
+        assigned_clusters = cross_validation(classifier,vectors, y)
+        # classifier.fit(vectors, y)
+        # assigned_clusters=classifier.predict(vectors)
 
     elif(clusterType=="DecisionTree"):
         classifier=DecisionTreeClassifier()
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
+        #cross-validation
+        assigned_clusters = cross_validation(classifier,vectors, y)
+        # classifier.fit(vectors, y)
+        # assigned_clusters=classifier.predict(vectors)
 
     elif(clusterType=="LogisticRegression"):
         classifier=sklearn.linear_model.LogisticRegression()
-        classifier.fit(vectors, y)
-        assigned_clusters=classifier.predict(vectors)
+        #cross-validation
+        assigned_clusters = cross_validation(classifier,vectors, y)
+        # classifier.fit(vectors, y)
+        # assigned_clusters=classifier.predict(vectors)
 
     else:
         print(clusterType, " is not a predefined cluster type.")
