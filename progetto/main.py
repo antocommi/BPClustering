@@ -21,7 +21,7 @@ from sklearn.model_selection import cross_validate
 
 clustering=["KMeans", "GMM", "SVM", "T2VH", "RandomForest", "DecisionTree", "LogisticRegression"]
 measure=["Precision", "Recall", "NMI", "F1", "RI"]
-logName='BPIC15GroundTruth_ridotto2'
+logName='BPIC15GroundTruth'
 embed={"Trace2Vec": "T2V", "Node2Vec": "N2V", "NGrams": "NG"}
 vectorsize=16
 NUM_CLUSTERS=5
