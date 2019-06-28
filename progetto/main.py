@@ -3,6 +3,7 @@ import Node2Vec
 import node2vec
 import NGrams
 import prepareInput
+import plotAll
 import texttable
 from texttable import Texttable
 import nltk
@@ -23,20 +24,21 @@ clustering=["KMeans", "GMM", "SVM", "T2VH", "RandomForest", "DecisionTree", "Log
 measure=["Precision", "Recall", "NMI", "F1", "RI"]
 logName='BPIC15GroundTruth'
 embed={"Trace2Vec": "T2V", "Node2Vec": "N2V", "NGrams": "NG"}
-vectorsize=16
+vectorsize=2
 NUM_CLUSTERS=5
 
 def main():
     prepareInput.createInput(logName)
 
     scores=[]
-
     #----------start Trace2Vec
     Trace2Vec.learn(logName,vectorsize)
     y=Trace2Vec.getY(logName)
     vectors, corpus=Trace2Vec.startCluster(logName, vectorsize)
+    printMatrix(vectors, "Trace2Vec", "vectors")
     for alg in clustering:
         assigned_clusters=cluster(alg, vectors, y)
+        printVector(assigned_clusters, "Trace2Vec", "clusters", alg)
         Trace2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
     scores.append(get_scores("Trace2Vec"))
@@ -55,9 +57,10 @@ def main():
     
     y=Node2Vec.getY(logName)
     vectors, corpus=Node2Vec.startCluster(logName, vectorsize)
-
+    printMatrix(vectors, "Node2Vec", "vectors")
     for alg in clustering:
         assigned_clusters=cluster(alg, vectors, y)
+        printVector(assigned_clusters, "Node2Vec", "clusters", alg)
         Node2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
     scores.append(get_scores("Node2Vec"))
@@ -65,8 +68,10 @@ def main():
 
     #----------start NGrams
     vectors, y=NGrams.ngrams_BPI_2015(logName, vectorsize)
+    printMatrix(vectors, "NGrams", "vectors")
     for alg in clustering:
         assigned_clusters=cluster(alg, vectors, y)
+        printVector(assigned_clusters, "NGrams", "clusters", alg)
         NGrams.endCluster(logName, assigned_clusters, vectorsize, alg, [0]*len(vectors))
 
     scores.append(get_scores("NGrams"))
@@ -74,6 +79,8 @@ def main():
 
     for score in scores:
         print_scores(score)
+
+    plotAll.plotAll()
 
 def compute_scores(y_true, y_pred):
     scores = {} 
@@ -168,12 +175,17 @@ def cluster(clusterType, vectors, y):
         return
     return assigned_clusters
 
-# def getTrace(folderName):
-#     text_file = open("input/"+folderName+".graph.real", "r")
-#     y=[]
-#     for line in text_file.readlines():
-#         y.append(line.split(",")[0])
-#     return y
+def printMatrix(vector, emb, name):
+    f=open("toBePlotted/"+logName+"_"+emb+"."+name, "w")
+    for v in vector:
+        for el in v:
+            f.write(str(el)+" ")
+        f.write('\n')
+
+def printVector(vector, emb, name, alg):
+    f=open("toBePlotted/"+logName+"_"+emb+"_"+alg+"."+name, "w")
+    for v in vector:
+        f.write(str(v)+'\n')
 
 warnings.filterwarnings("ignore")
 main()

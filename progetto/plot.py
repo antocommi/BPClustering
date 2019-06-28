@@ -31,7 +31,7 @@ def plot():
     # visualizer.transform(X)   # Transform the data
     # visualizer.poof()         # Draw/show/poof the data
 
-    # ## PLOT TIPO 3
+    ## PLOT TIPO 3
     # scatter_matrix(data, alpha = 0.2, figsize = (6, 6), diagonal = 'kde' )
     # plt.show()
 
