@@ -135,8 +135,6 @@ def cluster(clusterType, vectors, y):
         classifier=SVC(kernel='rbf', gamma='auto', random_state=0)
         #cross-validation
         assigned_clusters = cross_validation(classifier,vectors, y)
-        # classifier.fit(vectors, y)
-        # assigned_clusters=classifier.predict(vectors)
 
     elif(clusterType=="T2VH"):
         ret=hierarchical.ward_tree(vectors, n_clusters=NUM_CLUSTERS)
