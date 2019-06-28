@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 logName='BPIC15GroundTruth'
 clustering=["KMeans", "GMM", "SVM", "T2VH", "RandomForest", "DecisionTree", "LogisticRegression"]
 colors=['tab:blue', 'tab:red', 'tab:green', 'tab:brown', 'tab:grey']
-embed=["Trace2Vec", "Node2Vec", "NGrams"]
 
 def plot(emb):
     x, y = getXY(emb)
