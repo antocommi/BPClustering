@@ -3,7 +3,7 @@ import Node2Vec
 import node2vec
 import NGrams
 import prepareInput
-import plotAll
+import myPlot
 import texttable
 from texttable import Texttable
 import nltk
@@ -30,57 +30,58 @@ NUM_CLUSTERS=5
 def main():
     prepareInput.createInput(logName)
 
-    scores=[]
-    #----------start Trace2Vec
-    Trace2Vec.learn(logName,vectorsize)
-    y=Trace2Vec.getY(logName)
-    vectors, corpus=Trace2Vec.startCluster(logName, vectorsize)
-    printMatrix(vectors, "Trace2Vec", "vectors")
-    for alg in clustering:
-        assigned_clusters=cluster(alg, vectors, y)
-        printVector(assigned_clusters, "Trace2Vec", "clusters", alg)
-        Trace2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
+    # scores=[]
+    # #----------start Trace2Vec
+    # Trace2Vec.learn(logName,vectorsize)
+    # y=Trace2Vec.getY(logName)
+    # vectors, corpus=Trace2Vec.startCluster(logName, vectorsize)
+    # printMatrix(vectors, "Trace2Vec", "vectors")
+    # for alg in clustering:
+    #     assigned_clusters=cluster(alg, vectors, y)
+    #     printVector(assigned_clusters, "Trace2Vec", "clusters", alg)
+    #     Trace2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
-    scores.append(get_scores("Trace2Vec"))
-    #----------end Trace2Vec
+    # scores.append(get_scores("Trace2Vec"))
+    # #----------end Trace2Vec
 
-    #----------start Node2Vec
-    args=Node2Vec.parse_args()
-    args.input="input/"+logName+".graph"
-    args.output="output/"+logName+"N2VVS"+str(vectorsize)+".node2vec"
-    nx_G = Node2Vec.read_graph(args)
-    G = node2vec.Graph(nx_G, True, args.p, args.q)
-    G.preprocess_transition_probs()
-    walks = G.simulate_walks(args.num_walks, args.walk_length)
-    Node2Vec.learn_embeddings(args, logName, vectorsize, walks)
-    Node2Vec.extract(logName, vectorsize)
+    # #----------start Node2Vec
+    # args=Node2Vec.parse_args()
+    # args.input="input/"+logName+".graph"
+    # args.output="output/"+logName+"N2VVS"+str(vectorsize)+".node2vec"
+    # nx_G = Node2Vec.read_graph(args)
+    # G = node2vec.Graph(nx_G, True, args.p, args.q)
+    # G.preprocess_transition_probs()
+    # walks = G.simulate_walks(args.num_walks, args.walk_length)
+    # Node2Vec.learn_embeddings(args, logName, vectorsize, walks)
+    # Node2Vec.extract(logName, vectorsize)
     
-    y=Node2Vec.getY(logName)
-    vectors, corpus=Node2Vec.startCluster(logName, vectorsize)
-    printMatrix(vectors, "Node2Vec", "vectors")
-    for alg in clustering:
-        assigned_clusters=cluster(alg, vectors, y)
-        printVector(assigned_clusters, "Node2Vec", "clusters", alg)
-        Node2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
+    # y=Node2Vec.getY(logName)
+    # vectors, corpus=Node2Vec.startCluster(logName, vectorsize)
+    # printMatrix(vectors, "Node2Vec", "vectors")
+    # for alg in clustering:
+    #     assigned_clusters=cluster(alg, vectors, y)
+    #     printVector(assigned_clusters, "Node2Vec", "clusters", alg)
+    #     Node2Vec.endCluster(logName, assigned_clusters, vectorsize, alg, corpus)
 
-    scores.append(get_scores("Node2Vec"))
-    #----------end Node2Vec
+    # scores.append(get_scores("Node2Vec"))
+    # #----------end Node2Vec
 
-    #----------start NGrams
-    vectors, y=NGrams.ngrams_BPI_2015(logName, vectorsize)
-    printMatrix(vectors, "NGrams", "vectors")
-    for alg in clustering:
-        assigned_clusters=cluster(alg, vectors, y)
-        printVector(assigned_clusters, "NGrams", "clusters", alg)
-        NGrams.endCluster(logName, assigned_clusters, vectorsize, alg, [0]*len(vectors))
+    # #----------start NGrams
+    # vectors, y=NGrams.ngrams_BPI_2015(logName, vectorsize)
+    # printMatrix(vectors, "NGrams", "vectors")
+    # for alg in clustering:
+    #     assigned_clusters=cluster(alg, vectors, y)
+    #     printVector(assigned_clusters, "NGrams", "clusters", alg)
+    #     NGrams.endCluster(logName, assigned_clusters, vectorsize, alg, [0]*len(vectors))
 
-    scores.append(get_scores("NGrams"))
-    #----------end NGrams
+    # scores.append(get_scores("NGrams"))
+    # #----------end NGrams
 
-    for score in scores:
-        print_scores(score)
+    # for score in scores:
+    #     print_scores(score)
 
-    plotAll.plotAll()
+    for emb in embed:
+        myPlot.plot(emb)
 
 def compute_scores(y_true, y_pred):
     scores = {} 
