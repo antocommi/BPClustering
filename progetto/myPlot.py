@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 logName='BPIC15GroundTruth'
 clustering=["KMeans", "GMM", "SVM", "T2VH", "RandomForest", "DecisionTree", "LogisticRegression"]
 colors=['tab:blue', 'tab:red', 'tab:green', 'tab:brown', 'tab:grey']
+label=("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5")
 
 def plot(emb):
     x, y = getXY(emb)
@@ -17,7 +18,7 @@ def plot(emb):
         for i in range(5):
             ax[alg//4, alg%4].scatter(xs[i], ys[i], c=colors[i], label=colors[i], alpha=0.3, edgecolors='none')
 
-        ax[alg//4, alg%4].legend()
+        ax[alg//4, alg%4].legend(labels=label)
         ax[alg//4, alg%4].grid(True)
         ax[alg//4, alg%4].set_title(clustering[alg])
 
@@ -25,7 +26,7 @@ def plot(emb):
     xs, ys=separe(x, y, real)
     for i in range(5):
         ax[1, 3].scatter(xs[i], ys[i], c=colors[i], label=colors[i], alpha=0.3, edgecolors='none')
-    ax[1, 3].legend()
+    ax[1, 3].legend(labels=label)
     ax[1, 3].grid(True)
     ax[1, 3].set_title("Real")
 
