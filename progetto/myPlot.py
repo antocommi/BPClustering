@@ -45,7 +45,7 @@ def separe(x, y, cluster):
     return xs, ys
 
 def getXY(emb):
-    f1=open("toBePlotted/"+logName+"_"+emb+".vectors", "r")
+    f1=open("toBePlotted/"+logName+"_"+emb+"_2.vectors", "r")
     x=[]
     y=[]
     for line in f1:
@@ -56,7 +56,7 @@ def getXY(emb):
     return np.array(x), np.array(y)
 
 def getCluster(alg, emb):
-    f1=open("toBePlotted/"+logName+"_"+emb+"_"+alg+".clusters", "r")
+    f1=open("toBePlotted/"+logName+"_"+emb+"_"+alg+"_2.clusters", "r")
     x=[]
     for line in f1:
         x.append(int(line))
